@@ -399,22 +399,22 @@ bool ProvePrime_Atkin(const ZZ& N, vec_ZZ& cert,
 }
 
 
-bool ProvePrime(const ZZ& _N, vec_vec_ZZ& certs) {
+bool ProvePrime(const ZZ& N, vec_vec_ZZ& certs) {
   certs.SetLength(0);
   long i=0;
-  ZZ N(_N);
+  ZZ num(N);
   HCP_generate HCP;
-  while (NumBits(N)>30) {
+  while (NumBits(num)>30) {
     certs.SetLength(i+1);
-    if (!ProvePrime_Atkin(N,certs[i],HCP))
+    if (!ProvePrime_Atkin(num,certs[i],HCP))
       return false;
-    N=certs[i][1];
+    num=certs[i][1];
     ++i;
   }
   // prove small prime by trial division
   long n,limit;
   conv(limit,sqrt(n));
-  conv(n,N);
+  conv(n,num);
   PrimeSeq s;
   for (long p=s.next(); p<=limit; p=s.next())
     if (n%p==0)
