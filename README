@@ -1,0 +1,52 @@
+Elliptic Curve Primality Prover
+-------------------------------
+
+
+Included in this package is an implementation of the elliptic curve primality
+proof algorithm.  The implementation here should work reasonably well for
+primes up to about 1000 bits in size.  Beyond 1000 bits, I suspect that the
+precision of RR needs to be extended or more entries are needed in the
+discriminant array.
+
+
+COMPILING:
+
+To make this software, do the following:
+
+(1) Edit Makefile to ensure that NTLPREFIX is correctly set.
+(2) Type 'make'.
+
+Note: for (1), if the NTL header files are located in /opt/local/include/NTL/
+and the library is named /opt/local/lib/libntl.a, then NTLPREFIX should be 
+set to /opt/local.
+
+Note: for best results, compile NTL to use GMP as its underlying large integer
+package (LIP).  The Makefile assumes you have done this.  If you aren't using
+GMP, you may need to remove the '-lgmp' from the NTLLIB line.
+
+
+INTERFACE:
+
+This software is not yet complete and not intended for users who wish to
+actually prove primes.  The primary audience for this software is developers
+wishing to improve upon this implementation, developers wishing to write
+their own implementation, and any others who wish to learn about the ECPP
+algorithm.
+
+The ecpp-test program provided will prove the primality of randomly generated
+primes.  The program takes a single argument that indicates the size of the
+prime to be chosen (in bits).  Note that this program does not currently
+initialize the random number generator so it will prove the same prime every
+time (given a constant argument).  
+
+
+PERFORMANCE:
+
+This software has not yet been optimized.  It can prove a 1000 bit number in
+about 3 minutes on a 1 GHz machine.
+
+
+Questions, comments, problems, or other concerns can be emailed to:
+  chris.studholme@utoronto.ca
+
+-- END OF README --

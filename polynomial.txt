@@ -1,0 +1,451 @@
+/**************************************************************************\
+
+MODULE: polynomial
+
+SUMMARY:
+
+Macros are defined providing template-like classes for single variable
+polynomials.  These macros allow the definition of polynomials whose
+coefficients are of a particular type.  Multivariate polynomials can be
+defined by creating a polynomial whose coefficients are also polynomials.
+
+The implementation of polynomials defined using these macros is based on
+the vector classes defined using the vector macros (see vector.txt), and
+therefore, one must declare and implement a vector over the type of
+coefficient before declaring and implementing a polynomial with that type
+of coefficient.
+
+The declaration and implementation of a polynomial is done in several
+pieces.  The following macros declare all aspects of a polynomial:
+
+  NTL_polynomial_decl(T,vec_T,TX,T_zero);
+  NTL_eq_polynomial_decl(T,vec_T,TX);
+  NTL_io_polynomial_decl(T,vec_T,TX);
+  NTL_add_polynomial_decl(T,vec_T,TX);
+  NTL_mul_polynomial_decl(T,vec_T,TX);
+  NTL_diff_polynomial_decl(T,vec_T,TX);
+
+and the following implement the class and methods:
+
+  NTL_polynomial_impl(T,vec_T,TX,T_zero);
+  NTL_eq_polynomial_impl(T,vec_T,TX);
+  NTL_io_polynomial_impl(T,vec_T,TX);
+  NTL_add_polynomial_impl(T,vec_T,TX);
+  NTL_mul_polynomial_impl(T,vec_T,TX);
+  NTL_diff_polynomial_impl(T,vec_T,TX);
+
+Here, T is the type of coefficient, vec_T is a vector of coefficients, TX
+is the name of the polynomial class being declared, and T_zero is the zero
+value for T (which can be read-only referenced, typically T::zero()).  
+
+The only macros here that are required are the first declaration macro and 
+the first implementation macro.  Each of the others has specific requirements
+and may be omitted if those requirements cannot be met or if the functionality
+provided by the macro is not required.  
+
+
+/**************************************************************************\
+
+Base class declaration and implementation.  The macro:
+
+  NTL_polynomial_decl(T,vec_T,TX,T_zero);
+
+declares the base class and a few utility methods.  If additional constructors
+or instance methods are required in the class, the declaration may be split
+using:
+
+  NTL_polynomial_decl_begin(T,vec_T,TX,zero_T) 
+
+    ... additional constructors or instance methods ...
+
+  NTL_polynomial_decl_end(T,vec_T,TX,zero_T) 
+
+instead of the former macro.  The implementation of the class and utility
+methods is given by:
+
+  NTL_polynomial_impl(T,vec_T,TX,T_zero);
+
+Additional constructors or instance methods can be declared and implemented
+seperately as needed.
+
+The base class and utility methods require the following:
+
+  + IsZero(const T&), clear(T&), and swap(T&,T&)
+  + a zero value for T that can be read-only referenced
+  + vec_T
+
+The following class and methods are declared:
+
+
+class TX {
+public:
+
+  /* Default constructor.  Initial value is 0.
+   */ 
+  TX();
+ 
+  /* Construct from single constant term.  Initial value is c*X^i. 
+   */
+  TX(long i, const T& c);
+
+  /* Copy constructor.  If normalize==true, leading zeros are stripped 
+   * from rep.
+   */
+  TX(const TX& other, bool normalize=false);
+
+  /* Destructor.  Free all allocated memory.
+   */
+  ~TX();
+
+  /* Assignment from existing polynomial.
+   */
+  TX& operator=(const TX& other);
+
+  /* Assignment from constant term.
+   */
+  TX& operator=(const T& c);
+
+  /* Direct (read-only) access to coefficients.  A reference to T_zero
+   * is returned in the case that i is out of bounds.
+   */
+  const T& operator[](long i) const;
+
+  /* Set to zero.
+   */
+  void clear();
+
+  /* Release all allocated space and set to 0.
+   */
+  void kill();
+
+  /* Pre-allocate spaces for n coefficients.  The polynomial represented 
+   * is not changed.
+   */
+  void SetMaxLength(long n);
+
+  /* Maximum number of coefficients ever achieved.
+   */
+  long MaxLength() const;
+
+  /* Swaps this and other by swapping internal pointers.
+   */
+  void swap(TX& other);
+
+  /* Read-only reference to zero polynomial.
+   */
+  static const TX& zero();
+
+
+  /** Low-level methods and direct access to representation.
+   ** These methods are meant for developers of new polynomial classes
+   ** and not for the users of a particular class.  Please use with care.
+   */
+
+  vec_T rep;  /* coefficient vector */
+
+  /* Increase number of coefficients to n and zero new leading coefficients.
+   * Does nothing if n is less than or equal to rep.length.
+   */
+  void ExtendTo(long n);
+
+  /* Strip leading zeros from rep.  This method should be called after any
+   * modifications have been made to rep that might leave rep with leading
+   * zeros.  Most methods which operate on this polynomial class will fail
+   * if rep has leading zeros.
+   */
+  void normalize();
+
+  /* Initialize to 0 and swap with other.
+   */ 
+  TX(TX& other, NTL_NNS INIT_TRANS_TYPE);
+};
+
+
+/* Utility methods. */
+
+/* test if x is zero */
+bool IsZero(const TX &x);
+
+/* same as x.clear() */
+void clear(TX &x);
+
+/* same as x.swap(y), or y.swap(x) if you like */
+void swap(TX &x, TX &y);
+
+/* convert from base type */
+void conv(TX& dest, const T& src);
+
+/* convert from vector */
+void conv(TX& dest, const vec_T& src);
+
+/* degree of polynomial (deg(0)=-1) */
+long deg(const TX& a);
+
+/* Returns a read-only reference to coefficient i (zero if i not in range).
+ */
+const T& coeff(const TX& a, long i);
+
+/* Read-only reference to leading term of a (zero if a==0). */
+const T& LeadCoeff(const TX& a);
+
+/* Read-only reference to constant term of a. */
+const T& ConstTerm(const TX& a);
+
+/* Copy coefficient i to x (zero if i not in range).
+ */
+void GetCoeff(const T& x, const TX& a, long i);
+
+/* set the coefficient of X^i to a */
+void SetCoeff(TX& x, long i, const T& a);
+
+void VectorCopy(vec_T& x, const TX& a, long n);
+vec_T VectorCopy(const TX& a, long n);
+
+/* x = reverse of a[0]..a[hi] (hi>=-1) */
+void reverse(TX& x, const TX& a, long hi);
+TX reverse(const TX& a, long hi);
+
+/* reverse with hi default to deg(a) */
+void reverse(TX& x, const TX& a);
+TX reverse(const TX& a);
+
+/* shift operators: multiply by X^n */
+void LeftShift(TX& x, const TX& a, long n);
+TX LeftShift(const TX& a, long n);
+TX operator<<(const TX& a, long n);
+TX& operator<<=(TX& x, long n);
+
+/* shift operators: divide by X^n */
+void RightShift(TX& x, const TX& a, long n);
+TX RightShift(const TX& a, long n);
+TX operator>>(const TX& a, long n);
+TX& operator>>=(TX& x, long n);
+
+/* x = a % X^m */
+void trunc(TX& x, const TX& a, long m);
+TX trunc(const TX& a, long m);
+
+
+
+/**************************************************************************\
+
+Equality tests are declared with:
+
+  NTL_eq_polynomial_decl(T,vec_T,TX);
+
+and implemented with:
+
+  NTL_eq_polynomial_impl(T,vec_T,TX);
+
+These tests require operator== and operator!= for the vec_T class which are
+declared and implemented using NTL_eq_vector_decl() and NTL_eq_vector_impl().
+
+
+bool operator==(const TX& a, const TX& b);
+bool operator!=(const TX& a, const TX& b);
+
+/* promotion from T */
+bool operator==(const T& a, const TX& b);
+bool operator==(const TX& a, const T& b);
+bool operator!=(const T& a, const TX& b);
+bool operator!=(const TX& a, const T& b);
+
+
+/**************************************************************************\
+
+Input/Output methods are declared with:
+
+  NTL_io_polynomial_decl(T,vec_T,TX);
+
+and implemented with:
+
+  NTL_io_polynomial_impl(T,vec_T,TX);
+
+These methods require NTL_io_vector_decl() and NTL_io_vector_impl().
+
+Note: when reading from a stream, normalize() is called after reading the
+coefficient vector.
+
+
+istream& operator>>(NTL_SNS istream&, TX&);
+ostream& operator<<(NTL_SNS ostream&, const TX&);
+
+
+
+/**************************************************************************\
+
+Addition, subtraction and negation of polynomials is given by:
+
+  NTL_add_polynomial_decl(T,vec_T,TX);
+
+and implemented with:
+
+  NTL_add_polynomial_impl(T,vec_T,TX);
+
+These methods require:
+
+  + add(T&, const T&, const T&)
+  + sub(T&, const T&, const T&)
+  + negate(T&, const T&)
+  
+
+void add(TX& x, const TX& a, const TX& b);
+void sub(TX& x, const TX& a, const TX& b);
+void negate(TX& x, const TX& a);
+
+TX operator+(const TX& a, const TX& b);
+TX operator-(const TX& a, const TX& b);
+TX operator-(const TX& a);
+
+TX& operator+=(TX& x, const TX& a);
+TX& operator-=(TX& x, const TX& a);
+
+/* promotions from T */
+void add(TX& x, const T& a, const TX& b); 
+void add(TX& x, const TX& a, const T& b); 
+void sub(TX& x, const T& a, const TX& b); 
+void sub(TX& x, const TX& a, const T& b); 
+
+TX operator+(const T& a, const TX& b);
+TX operator+(const TX& a, const T& b);
+TX operator-(const T& a, const TX& b);
+TX operator-(const TX& a, const T& b);
+
+TX& operator+=(TX& x, const T& a);
+TX& operator-=(TX& x, const T& a);
+
+
+/**************************************************************************\
+
+Scalar and polynomial multiplication are provided by:
+
+  NTL_mul_polynomial_decl(T,vec_T,TX);
+
+and implemented with:
+
+  NTL_mul_polynomial_impl(T,vec_T,TX);
+
+These methods require:
+
+  + IsOne(const T&) and set(T&)
+  + mul(T&, const T&, const T&)
+
+Polynomial multiplication is provided by the classic (naive) method.  If one
+wishes to provide more advanced polynomial multiplication methods, use
+the following implementation instead of the one above:
+
+  NTL_mul_polynomial_impl_plain(T,vec_T,TX);
+
+This macro will leave out the implementations of:
+
+  void mul(TX&, const TX&, const TX&);
+  void sqr(TX&, const TX&);
+
+and instead provide:
+
+  void mul_classic(TX&, const TX&, const TX&);
+  void sqr_classic(TX&, const TX&);
+
+
+/* set x to constant 1 */
+void set(TX& x);
+
+/* test if x is constant 1 */
+bool IsOne(const TX& x);
+
+/* set x to monomial X */
+void SetX(TX& x);
+
+/* test if x is monomial X */
+bool IsX(const TX& x);
+
+/* set coefficient on X^i to 1 */
+void SetCoeff(TX& x, long i);
+
+/* test is lead coefficient is 1 */
+bool IsMonic(const TX& x);
+
+/* scalar multiplication */
+void mul(TX& x, const TX& a, const T& b);
+void mul(TX& x, const T& a, const TX& b); 
+
+TX operator*(const T& a, const TX& b); 
+TX operator*(const TX& a, const T& b); 
+TX operator*=(TX& x, const T& a); 
+
+/* polynomial multiplication */
+void mul(TX& x, const TX& a, const TX& b); 
+void mul_classic(TX& x, const TX& a, const TX& b); 
+TX operator*(const TX& a, const TX& b); 
+TX operator*=(TX& x, const TX& a); 
+
+/* squaring */
+void sqr(TX& x, const TX& a); 
+void sqr_classic(TX& x, const TX& a); 
+TX sqr(const TX& a); 
+
+/* multiply followed by truncate */
+void MulTrunc(TX& x, const TX& a, const TX& b, long n); 
+TX MulTrunc(const TX& a, const TX& b, long n); 
+
+/* square followed by truncate */
+void SqrTrunc(TX& x, const TX& a, long n); 
+TX SqrTrunc(const TX& a, long n); 
+
+/* exponentiation */
+void power(TX& x, const TX& a, long e); 
+TX power(const TX& a, long e); 
+
+/* polynomial evaluation: x=f(a) */
+void eval(T& x, const TX& f, const T& a); 
+T eval(const TX& f, const T& a); 
+
+/* build monic x from roots given by a */
+void BuildFromRoots(TX& x, const vec_T& a); 
+TX BuildFromRoots(const vec_T& a); 
+
+
+
+/**************************************************************************\
+
+Differentiation:
+
+  NTL_diff_polynomial_decl(T,vec_T,TX);
+
+implemented with:
+
+  NTL_diff_polynomial_impl(T,vec_T,TX);
+
+Differentiation requires:
+
+  + mul(T&, long, const T&)
+
+
+/* partial derivative with respect to X */
+void diff(TX& x, const TX& a);
+TX diff(const TX& a);
+
+
+
+/**************************************************************************\
+
+Characteristic polynomial of a matrix:
+
+  NTL_char_polynomial_decl(T,vec_T,mat_T,TX);
+
+implemented with:
+
+  NTL_char_polynomial_impl(T,vec_T,mat_T,TX);
+
+This most likely does not work yet.  Please don't use unless you plan to
+fix it.
+
+
+void CharPoly(TX& f, const mat_T& M);
+
+
+
+/**************************************************************************\
+
+
+

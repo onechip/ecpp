@@ -1,0 +1,15 @@
+/**************************************************************************\
+
+MODULE: polymod
+
+SUMMARY:
+
+Macros are defined providing template-like classes for polynomials modulo
+a fixed polynomial modulus.
+
+   ... yet to be written ...
+
+/**************************************************************************\
+
+
+
