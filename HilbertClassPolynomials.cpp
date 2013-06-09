@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 
 //#include <std/complext.cc>
 
@@ -13,6 +13,9 @@
  * Written by: Chris Studholme
  * Copyright:  GPL (http://www.fsf.org/copyleft/gpl.html)
  */
+
+
+NTL_START_IMPL;
 
 
 /**************** class HilbertClassPolynomials ****************/
@@ -127,3 +130,7 @@ void HCP_generate::get_poly(ZZX& P, long D) {
   for (long i=0; i<=deg(Pr); ++i)
     SetCoeff(P,i,RoundToZZ(coeff(Pr,i)));
 }
+
+
+NTL_END_IMPL;
+

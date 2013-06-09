@@ -42,15 +42,15 @@ NTL_polymod_decl_begin(RR,RRX,RRXModulus,CC);
   }
 
   // get parts (read-only reference)
-  inline const RR& CC::real() {
+  inline const RR& real() {
     return rep[0];
   }
-  inline const RR& CC::imag() {
+  inline const RR& imag() {
     return rep[1];
   }
 
   // read-only reference to i
-  static const CC& CC::I() { 
+  static const CC& I() { 
     static CC i(to_RR(0),to_RR(1));    
     return i;
   }

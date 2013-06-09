@@ -31,6 +31,9 @@ SUMMARY:
 */
 
 
+NTL_OPEN_NNS;
+
+
 #define NTLX_OPT_RETURN(T,x) return x
 
 
@@ -247,8 +250,8 @@ inline bool operator!=(const EC_p& a, const EC_p& b) {
 
 
 // stream operators
-ostream& operator<<(ostream&, const EC_pCurve&);
-ostream& operator<<(ostream&, const EC_p&);
+std::ostream& operator<<(std::ostream&, const EC_pCurve&);
+std::ostream& operator<<(std::ostream&, const EC_p&);
 
 
 // random point
@@ -339,5 +342,6 @@ private:
 };
 
 
+NTL_CLOSE_NNS;
 
 #endif

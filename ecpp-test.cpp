@@ -1,11 +1,13 @@
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include <NTL/vec_vec_ZZ.h>
 #include <NTL/ZZ_pXFactoring.h>
 #include "ZZFactoring.h"
 #include "HilbertClassPolynomials.h"
 #include "EC_p.h"
+
+using namespace NTL;
 
 /*
 Copyright (C) 2004 Chris Studholme
@@ -164,13 +166,13 @@ void find_curve(ZZ_p& a, ZZ_p& b, long D, const ZZ& N,
   }
   
   const ZZX& T = HCP.poly(D);
-  cout<<"find_curve: T="<<T<<endl;
+  std::cout<<"find_curve: T="<<T<<std::endl;
   ZZ_pX Tp;
   conv(Tp,T);
-  cout<<"find_curve: Tp="<<Tp<<endl;
+  std::cout<<"find_curve: Tp="<<Tp<<std::endl;
   ZZ_p j;
   FindRoot(j,Tp);
-  cout<<"j="<<j<<endl;
+  std::cout<<"j="<<j<<std::endl;
   ZZ_p c;
   div(c,j,j-1728);
   mul(a,-3,c);
@@ -249,9 +251,9 @@ bool ProvePrime_Atkin(const ZZ& N, vec_ZZ& cert,
   SqrRoot(Nf,Ns+1); // Nf+1 >= ceil(N^{1/4})
   threshold = Ns+1 + 2*(Nf+1) + 1;  // threshold may be a little too high here
 
-  cout<<endl;
-  cout<<"N="<<N<<endl;
-  cout<<"threshold = "<<threshold<<endl;
+  std::cout<<std::endl;
+  std::cout<<"N="<<N<<std::endl;
+  std::cout<<"threshold = "<<threshold<<std::endl;
 
   ZZ_pBak bak1;
   bak1.save();
@@ -297,15 +299,15 @@ bool ProvePrime_Atkin(const ZZ& N, vec_ZZ& cert,
     }
     if (!found)
       continue;
-    cout<<"m="<<m<<endl;
-    cout<<"q="<<q<<endl;
+    std::cout<<"m="<<m<<std::endl;
+    std::cout<<"q="<<q<<std::endl;
     // step 6
     EC_pCurve curve;
     ZZ_p A,B;
     find_curve(A,B,to_long(D),N,HCP);
     SetCoeff(curve,1,A);
     SetCoeff(curve,0,B);
-    cout<<"curve="<<curve<<endl;
+    std::cout<<"curve="<<curve<<std::endl;
     // step 7
     ZZ_p g;
     do {
@@ -318,11 +320,11 @@ bool ProvePrime_Atkin(const ZZ& N, vec_ZZ& cert,
 	power(t,g,(N-1)/3);
 	if (IsOne(t))
 	  continue;
-	//cout<<"t="<<t<<endl;
+	//std::cout<<"t="<<t<<std::endl;
       }
       break;
     } while (true);
-    //cout<<"g="<<g<<endl;
+    //std::cout<<"g="<<g<<std::endl;
     long k=0;
     EC_p::init(curve);
     EC_p P,P1,P2;
@@ -332,13 +334,13 @@ bool ProvePrime_Atkin(const ZZ& N, vec_ZZ& cert,
       if (!IsValid(P)) 
 	return false;
       // step 9
-      //cout<<"P="<<P<<endl;
+      //std::cout<<"P="<<P<<std::endl;
       mul(P2,P,m/q);
-      //cout<<"P2="<<P2<<endl;
+      //std::cout<<"P2="<<P2<<std::endl;
       // NOTE: if IsZero(P2) just choose a new point, not a new curve!!!
       if (!IsZero(P2)) {
 	mul(P1,P2,q);
-	//cout<<"P1="<<P1<<endl;
+	//std::cout<<"P1="<<P1<<std::endl;
 	if (IsZero(P1)) 
 	  break;
       }
@@ -346,27 +348,27 @@ bool ProvePrime_Atkin(const ZZ& N, vec_ZZ& cert,
       ++k;
       if (D==-3) {
 	if (k>=6) {
-	  cout<<"P="<<P<<endl;
-	  cout<<"P1="<<P1<<endl;
-	  cout<<"P2="<<P2<<endl;
+	  std::cout<<"P="<<P<<std::endl;
+	  std::cout<<"P1="<<P1<<std::endl;
+	  std::cout<<"P2="<<P2<<std::endl;
 	  return false;
 	}
 	SetCoeff(curve,0,coeff(curve,0)*g);
       }
       else if (D==-4) {
 	if (k>=4) {
-	  cout<<"P="<<P<<endl;
-	  cout<<"P1="<<P1<<endl;
-	  cout<<"P2="<<P2<<endl;
+	  std::cout<<"P="<<P<<std::endl;
+	  std::cout<<"P1="<<P1<<std::endl;
+	  std::cout<<"P2="<<P2<<std::endl;
 	  return false;
 	}
 	SetCoeff(curve,1,coeff(curve,1)*g);
       }
       else {
 	if (k>=2) {
-	  cout<<"P="<<P<<endl;
-	  cout<<"P1="<<P1<<endl;
-	  cout<<"P2="<<P2<<endl;
+	  std::cout<<"P="<<P<<std::endl;
+	  std::cout<<"P1="<<P1<<std::endl;
+	  std::cout<<"P2="<<P2<<std::endl;
 	  return false;
 	}
 	SetCoeff(curve,1,coeff(curve,1)*sqr(g));
@@ -434,29 +436,29 @@ void check_table() {
     used[d]=1;
     if (d>max) max=d;
     if (d<3) 
-      cerr<<"d="<<d<<"  i="<<i<<endl;
+      std::cerr<<"d="<<d<<"  i="<<i<<std::endl;
     long d4 = (-d)%4;
     if (d4<0) d4+=4;
     if (d4!=0 && d4!=1)
-      cerr<<"d="<<d<<"  i="<<i<<"  d4="<<d4<<endl;
+      std::cerr<<"d="<<d<<"  i="<<i<<"  d4="<<d4<<std::endl;
     int j=i+1;
     while (discriminant_array[j]) {
       if (d==discriminant_array[j])
-	cerr<<"duplicate: d="<<d<<"  i="<<i<<"  j="<<j<<endl;
+	std::cerr<<"duplicate: d="<<d<<"  i="<<i<<"  j="<<j<<std::endl;
       ++j;
     }
     ++i;
   }
-  cerr<<"total="<<i<<endl;
-  cerr<<"max="<<max<<endl;
+  std::cerr<<"total="<<i<<std::endl;
+  std::cerr<<"max="<<max<<std::endl;
   for (int d=3; d<500; ++d)
     if (used[d]==0) {
       long d4 = (-d)%4;
       if (d4<0) d4+=4;
       if (d4==0 || d4==1)
-	cout<<d<<",";
+	std::cout<<d<<",";
     }
-  cout<<endl;
+  std::cout<<std::endl;
 }
 
 int main(int argc, char*argv[]) {
@@ -476,23 +478,23 @@ int main(int argc, char*argv[]) {
 
   vec_vec_ZZ certs;
   if (!ProvePrime(N,certs)) {
-    cout<<"Failed to prove prime.  Maybe N is composite?"<<endl;
+    std::cout<<"Failed to prove prime.  Maybe N is composite?"<<std::endl;
     return 1;
   }
 
-  cout<<endl;
-  cout<<"N="<<N<<endl;
+  std::cout<<std::endl;
+  std::cout<<"N="<<N<<std::endl;
   for (long i=0; i<certs.length(); ++i) {
-    cout<<endl;
-    cout<<"[q="<<certs[i][1]<<endl;
-    cout<<" r="<<certs[i][2]<<endl;
-    cout<<" a="<<certs[i][3]<<endl;
-    cout<<" b="<<certs[i][4]<<"]"<<endl;
+    std::cout<<std::endl;
+    std::cout<<"[q="<<certs[i][1]<<std::endl;
+    std::cout<<" r="<<certs[i][2]<<std::endl;
+    std::cout<<" a="<<certs[i][3]<<std::endl;
+    std::cout<<" b="<<certs[i][4]<<"]"<<std::endl;
   }
   
-  //cout<<endl;
+  //std::cout<<std::endl;
   //HCP_generate HCP;
-  //cout<<"T(-499) = "<<HCP.poly(-499)<<endl;
+  //std::cout<<"T(-499) = "<<HCP.poly(-499)<<std::endl;
 
   return 0;
 }

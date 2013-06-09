@@ -66,7 +66,7 @@ public: \
     if (!IsZero(c)) { \
       rep.SetLength(i+1); \
       rep.RawGet(i)=c; \
-      while (i>0) ::clear(rep.RawGet(--i)); \
+      while (i>0) NTL_NNS clear(rep.RawGet(--i)); \
     } \
   } \
  \
@@ -78,7 +78,7 @@ public: \
   /* Initialize to 0 and swap with other.  \
    */ \
   TX(TX& other, NTL_NNS INIT_TRANS_TYPE) { \
-    ::swap(rep,other.rep); \
+    NTL_NNS swap(rep,other.rep); \
   } \
  \
   /* Destructor.  Free all allocated memory. \
@@ -132,7 +132,7 @@ public: \
     long cur = rep.length(); \
     if (n>cur) { \
       rep.SetLength(n); \
-      while (cur<n) ::clear(rep.RawGet(cur++)); \
+      while (cur<n) NTL_NNS clear(rep.RawGet(cur++)); \
     } \
   } \
  \
@@ -158,7 +158,7 @@ public: \
   /* Swaps this and other by swapping internal pointers.  \
    */ \
   inline void swap(TX& other) {  \
-    ::swap(rep,other.rep); \
+    NTL_NNS swap(rep,other.rep); \
   } \
  \
   /* Read-only reference to zero polynomial.  \

@@ -134,7 +134,7 @@ public: \
   /* Initialize to 0 and swap with other.  \
    */ \
   TE(TE& other, NTL_NNS INIT_TRANS_TYPE) { \
-    ::swap(rep,other.rep); \
+    NTL_NNS swap(rep,other.rep); \
   } \
  \
   /* Destructor.  Free all allocated memory. \
@@ -164,13 +164,13 @@ public: \
   /* Set to zero. \
    */ \
   inline void clear() { \
-    ::clear(rep); \
+    NTL_NNS clear(rep); \
   } \
  \
   /* Swaps this and other by swapping internal pointers.  \
    */ \
   inline void swap(TE& other) {  \
-    ::swap(rep,other.rep); \
+    NTL_NNS swap(rep,other.rep); \
   } \
  \
   /* Read-only reference to zero polynomial.  \

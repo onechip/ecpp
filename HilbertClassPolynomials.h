@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 
+NTL_OPEN_NNS;
+
 // abstract class for Hilbert class polynomials
 class HilbertClassPolynomials {
 private:
@@ -58,6 +60,7 @@ protected:
   void get_poly(ZZX& dest, long D);
 };
 
+NTL_CLOSE_NNS;
 
 
 #endif
