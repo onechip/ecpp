@@ -415,7 +415,7 @@ bool ProvePrime(const ZZ& N, vec_vec_ZZ& certs) {
   }
   // prove small prime by trial division
   long n,limit;
-  conv(limit,sqrt(n));
+  conv(limit,SqrRoot(num));
   conv(n,num);
   PrimeSeq s;
   for (long p=s.next(); p<=limit; p=s.next())
