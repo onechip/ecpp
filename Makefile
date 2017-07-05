@@ -5,11 +5,11 @@ LINK		= g++
 NTLPREFIX	= /usr/local
 
 PREFFLAGS	=
-CPPFLAGS	= -I$(NTLPREFIX)/include -I. -O2 -Wall -Wno-deprecated $(PREFFLAGS)
+CPPFLAGS	= -I$(NTLPREFIX)/include -I. -O2 -Wall $(PREFFLAGS)
 LINKFLAGS	= -L$(NTLPREFIX)/lib -lntl -lgmp $(PREFFLAGS)
 
 ALL_PROGS	= ecpp-test
-COMMON_OBJS	= EC_p.o pair_ZZ_long.o ZZFactoring.o \
+COMMON_OBJS	= EC_p.o ZZFactoring.o \
 		  RRX.o CC.o HilbertClassPolynomials.o
 COMMON_HEADERS	=
 ALL_DIRS	=

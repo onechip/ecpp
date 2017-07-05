@@ -31,11 +31,9 @@ SUMMARY:
 */
 
 
-NTL_OPEN_NNS;
-
-
 #define NTLX_OPT_RETURN(T,x) return x
 
+NTL_OPEN_NNS;
 
 // classes defined here
 class EC_pCurve;

@@ -7,9 +7,7 @@
  * Copyright:  GPL (http://www.fsf.org/copyleft/gpl.html)
  */
 
-
 NTL_START_IMPL;
-
 
 /**************** EC_pCurve methods ****************/
 
@@ -62,7 +60,7 @@ ostream& operator<<(ostream& stream, const EC_pCurve& curve) {
 EC_pCurve* EC_p::c = NULL;
 EC_p* EC_p::inf = NULL;
 
-EC_p::EC_p() : Y(ZZ_p_NoAlloc),Z(ZZ_p_NoAlloc) {
+EC_p::EC_p() : Y(INIT_NO_ALLOC),Z(INIT_NO_ALLOC) {
   switch (c->rep) {
   case EC_pCurve::AFFINE:
     Y._ZZ_p__rep.SetSize(ZZ_p::ModulusSize());
@@ -830,6 +828,5 @@ void mul(EC_p& x, const EC_p& a, long n) {
   } while (mask>1);
   swap(x,result);
 }
-
 
 NTL_END_IMPL;

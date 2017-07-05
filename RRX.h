@@ -1,18 +1,12 @@
 #ifndef NTL_RRX__H
 #define NTL_RRX__H
 
-#include <NTL/RR.h>
-//#include <NTL/polynomial.h>
+#include <NTL/vec_RR.h>
 #include "polynomial.h"
-#include <NTL/vector.h>
 
 NTL_OPEN_NNS;
 
 extern const RR RR_zero;
-
-NTL_vector_decl(RR,vec_RR);
-NTL_eq_vector_decl(RR,vec_RR);
-NTL_io_vector_decl(RR,vec_RR);
 
 NTL_polynomial_decl(RR,vec_RR,RRX,RR_zero);
 NTL_eq_polynomial_decl(RR,vec_RR,RRX);
@@ -36,8 +30,6 @@ inline RR eval(const RRX& f, double d) {
   RR x; eval(x,f,to_RR(d)); NTL_OPT_RETURN(RR,x); 
 }
 
-
 NTL_CLOSE_NNS;
-
 
 #endif
