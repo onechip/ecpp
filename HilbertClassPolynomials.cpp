@@ -98,7 +98,7 @@ void HCP_generate::get_poly(ZZX& P, long D) {
       if (divide(t,a)) {
 	CC j;
 	j = function_j((to_RR(-b)+sqrt(Dc))/to_RR(2*a));
-	cout<<"HCP: a="<<a<<"  b="<<b<<"  j="<<j<<endl;
+    std::cout<<"HCP: a="<<a<<"  b="<<b<<"  j="<<j<<std::endl;
 	if (a==b || b==0 || a*a==t) {
 	  clear(T);
 	  SetCoeff(T,0,-real(j));
